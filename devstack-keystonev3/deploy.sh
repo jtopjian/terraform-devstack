@@ -67,6 +67,7 @@ enable_service q-agt
 enable_service q-dhcp
 enable_service q-l3
 enable_service q-meta
+enable_service q-flavors
 
 # Disable Neutron metering
 disable_service q-metering
@@ -77,23 +78,9 @@ disable_service q-metering
 # Enable FWaaS
 enable_service q-fwaas
 
-# Enable LBaaS v2
-enable_plugin neutron-lbaas https://git.openstack.org/openstack/neutron-lbaas stable/\$OPENSTACK_VERSION
-#enable_plugin octavia https://git.openstack.org/openstack/octavia stable/\$OPENSTACK_VERSION
-enable_plugin octavia https://git.openstack.org/openstack/octavia
-enable_service q-lbaasv2
-enable_service octavia
-enable_service o-cw
-enable_service o-hm
-enable_service o-hk
-enable_service o-api
-
-# Octavia
-OCTAVIA_AUTH_VERSION=3
-
 # Enable Trove
-#enable_plugin trove git://git.openstack.org/openstack/trove.git stable/\$OPENSTACK_VERSION
-#enable_service trove,tr-api,tr-tmgr,tr-cond
+enable_plugin trove git://git.openstack.org/openstack/trove.git stable/\$OPENSTACK_VERSION
+enable_service trove,tr-api,tr-tmgr,tr-cond
 
 # Disable Temptest
 disable_service tempest
@@ -131,34 +118,6 @@ ENABLE_IDENTITY_V2=False
 LOGDAYS=1
 LOGFILE=/opt/stack/logs/stack.sh.log
 LOGDIR=/opt/stack/logs
-
-[[post-config|\$OCTAVIA_CONF]]
-[default]
-debug = true
-verbose = true
-[keystone_authtoken]
-auth_uri = http://localhost:5000/v3
-auth_url = http://localhost:35357/v3
-user_domain_id = default
-project_name = default
-auth_type = password
-[keystone_authtoken_v3]
-admin_user_domain = default
-admin_project_domain = default
-[[post-config|\$NEUTRON_CONF]]
-[service_auth]
-auth_version = 3
-auth_uri = http://localhost:5000/v3
-auth_url = http://localhost:35357/v3
-admin_user_domain = default
-admin_project_domain = default
-[[post-config|\$NEUTRON_LBAAS_CONF]]
-[service_auth]
-auth_version = 3
-auth_uri = http://localhost:5000/v3
-auth_url = http://localhost:35357/v3
-admin_user_domain = default
-admin_project_domain = default
 EOF
 ./stack.sh
 
