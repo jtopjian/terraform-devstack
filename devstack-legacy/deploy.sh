@@ -20,6 +20,7 @@ echo 'export PATH=$PATH:$HOME/terraform:$HOME/go/bin' >> .bashrc
 source .bashrc
 
 go get -u github.com/kardianos/govendor
+go get -u golang.org/x/crypto/ssh
 go get github.com/hashicorp/terraform
 
 git clone https://git.openstack.org/openstack-dev/devstack -b stable/mitaka
@@ -146,7 +147,8 @@ EOF
 source openrc admin
 wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img
 glance image-create --name CirrOS --disk-format qcow2 --container-format bare < cirros-0.3.4-x86_64-disk.img
-nova flavor-create m1.tform 99 512 5 1 --ephemeral 10
+nova flavor-create m1.acctest 99 512 5 1 --ephemeral 10
+nova flavor-create m1.resize 98 512 6 1 --ephemeral 10
 _NETWORK_ID=$(nova net-list | grep private | awk -F\| '{print $2}' | tr -d ' ')
 _EXTGW_ID=$(nova net-list | grep public | awk -F\| '{print $2}' | tr -d ' ')
 _IMAGE_ID=$(nova image-list | grep CirrOS | awk -F\| '{print $2}' | tr -d ' ' | head -1)
@@ -156,12 +158,5 @@ echo export OS_NETWORK_ID=$_NETWORK_ID >> openrc
 echo export OS_EXTGW_ID=$_EXTGW_ID >> openrc
 echo export OS_POOL_NAME="public" >> openrc
 echo export OS_FLAVOR_ID=99 >> openrc
+echo export OS_FLAVOR_ID_RESIZE=98 >> openrc
 source openrc demo
-
-# Replace the below lines with the repo/branch you want to test
-#git remote add jtopjian https://github.com/jtopjian/terraform
-#git fetch jtopjian
-#git checkout --track jtopjian/openstack-secgroup-safe-delete
-#make testacc TEST=./builtin/providers/openstack TESTARGS='-run=AccBlockStorageV1'
-#make testacc TEST=./builtin/providers/openstack TESTARGS='-run=AccCompute'
-#make testacc TEST=./builtin/providers/openstack

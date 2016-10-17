@@ -29,6 +29,7 @@ testacc() {
 
 gophercloudtest() {
   if [[ -n \$1 ]] && [[ -n \$2 ]]; then
+    export OS_DOMAIN_NAME=default
     pushd  ~/go/src/github.com/gophercloud/gophercloud
     go test -v -tags "fixtures acceptance" -run "\$1" github.com/gophercloud/gophercloud/acceptance/openstack/\$2 | tee ~/gophercloud.log
     popd
