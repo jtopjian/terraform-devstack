@@ -164,10 +164,7 @@ EOF
 
 # Patch openrc
 cat >> openrc <<EOF
-if [ "\$OS_IDENTITY_API_VERSION" = "3" ]; then
-  export OS_USER_DOMAIN_ID=\${OS_USER_DOMAIN_ID:-"default"}
-  export OS_PROJECT_DOMAIN_ID=\${OS_PROJECT_DOMAIN_ID:-"default"}
-fi
+export OS_DOMAIN_NAME=default
 EOF
 
 # Prep the testing environment by creating the required testing resources and environment variables
