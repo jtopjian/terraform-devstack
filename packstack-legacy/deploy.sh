@@ -11,18 +11,6 @@ yum update -y -q
 yum install -y -q openstack-packstack
 packstack --answer-file /home/centos/packstack-answers.txt
 
-# Configure LBaaSv2
-crudini --set /etc/neutron/neutron.conf DEFAULT service_plugins lbaasv2,router,firewall
-crudini --set /etc/neutron/neutron.conf service_providers service_provider LOADBALANCERV2:Haproxy:neutron_lbaas.drivers.haproxy.plugin_driver.HaproxyOnHostPluginDriver:default
-crudini --set /etc/neutron/lbaas_agent.ini DEFAULT device_driver neutron_lbaas.drivers.haproxy.namespace_driver.HaproxyNSDriver
-
-neutron-db-manage --service lbaas upgrade head
-systemctl disable neutron-lbaas-agent.service
-systemctl stop neutron-lbaas-agent.service
-systemctl restart neutron-server.service
-systemctl enable neutron-lbaasv2-agent.service
-systemctl start neutron-lbaasv2-agent.service
-
 # Prep the testing environment by creating the required testing resources and environment variables
 source /root/keystonerc_admin
 nova flavor-create m1.acctest 99 512 5 1 --ephemeral 10

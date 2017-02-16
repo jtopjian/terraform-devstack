@@ -1,14 +1,14 @@
-resource "openstack_compute_keypair_v2" "packstack-standard" {
-  name = "packstack-standard"
+resource "openstack_compute_keypair_v2" "packstack-legacy" {
+  name = "packstack-legacy"
   public_key = "${file("key/id_rsa.pub")}"
 }
 
-resource "openstack_compute_instance_v2" "packstack-standard" {
-  name = "packstack-standard"
+resource "openstack_compute_instance_v2" "packstack-legacy" {
+  name = "packstack-legacy"
   image_id = "5f2ba379-4c0e-4600-8c7b-9d8aadfaddae"
   flavor_name = "m1.xlarge"
 
-  key_pair = "${openstack_compute_keypair_v2.packstack-standard.name}"
+  key_pair = "${openstack_compute_keypair_v2.packstack-legacy.name}"
   security_groups = ["default", "AllowAll"]
 
   block_device {
@@ -29,18 +29,18 @@ resource "openstack_compute_instance_v2" "packstack-standard" {
 }
 
 data "template_file" "packstack-answers" {
-  template = "${file("files/packstack-answers.tpl")}"
+  template = "${file("packstack-answers.tpl")}"
 
   vars {
-    ACCESS_IP_V4 = "${openstack_compute_instance_v2.packstack-standard.access_ip_v4}"
+    ACCESS_IP_V4 = "${openstack_compute_instance_v2.packstack-legacy.access_ip_v4}"
   }
 }
 
-resource "null_resource" "packstack-standard" {
+resource "null_resource" "packstack-legacy" {
   connection {
     user = "centos"
     private_key = "${file("key/id_rsa")}"
-    host = "${openstack_compute_instance_v2.packstack-standard.access_ip_v6}"
+    host = "${openstack_compute_instance_v2.packstack-legacy.access_ip_v6}"
   }
 
   provisioner file {
@@ -49,22 +49,27 @@ resource "null_resource" "packstack-standard" {
   }
 
   provisioner file {
-    source = "files"
-    destination = "/home/centos/files"
+    source = "deploy.sh"
+    destination = "/home/centos/deploy.sh"
+  }
+
+  provisioner file {
+    source = "local.sh"
+    destination = "/home/centos/local.sh"
   }
 
   provisioner "remote-exec" {
     inline = [
-      "sudo bash /home/centos/files/deploy.sh",
-      "sudo bash /home/centos/files/local.sh",
+      "sudo bash /home/centos/deploy.sh",
+      "sudo bash /home/centos/local.sh",
     ]
   }
 }
 
 output "ipv6" {
-  value = "${openstack_compute_instance_v2.packstack-standard.access_ip_v6}"
+  value = "${openstack_compute_instance_v2.packstack-legacy.access_ip_v6}"
 }
 
 output "ipv4" {
-  value = "${openstack_compute_instance_v2.packstack-standard.access_ip_v4}"
+  value = "${openstack_compute_instance_v2.packstack-legacy.access_ip_v4}"
 }

@@ -336,7 +336,7 @@ CONFIG_KEYSTONE_ADMIN_PW=08c33e2592fc4a46
 CONFIG_KEYSTONE_DEMO_PW=c028794fcb9f4362
 
 # Identity service API version string. ['v2.0', 'v3']
-CONFIG_KEYSTONE_API_VERSION=v3
+CONFIG_KEYSTONE_API_VERSION=v2.0
 
 # Identity service token format (UUID or PKI). The recommended format
 # for new deployments is UUID. ['UUID', 'PKI']
