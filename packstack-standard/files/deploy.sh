@@ -33,6 +33,13 @@ systemctl restart neutron-server.service
 systemctl enable neutron-lbaasv2-agent.service
 systemctl start neutron-lbaasv2-agent.service
 
+# Ensure Nova uses kvm
+crudini --set /etc/nova/nova.conf libvirt virt_type kvm
+systemctl restart openstack-nova-compute
+
+# Move findmnt to allow multiple mounts to 127.0.0.1:/mnt
+mv /bin/findmnt{,.orig}
+
 # Prep the testing environment by creating the required testing resources and environment variables
 source /root/keystonerc_admin
 nova flavor-create m1.acctest 99 512 5 1 --ephemeral 10
