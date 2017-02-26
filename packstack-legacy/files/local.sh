@@ -27,9 +27,17 @@ testacc() {
 
 gophercloudtest() {
   if [[ -n \$1 ]] && [[ -n \$2 ]]; then
+    export OS_TENANT_NAME=\$OS_PROJECT_NAME
+    export OS_DOMAIN_NAME=default
+    export OS_SHARE_NETWORK_ID=\$OS_NETWORK_ID
+
     pushd  ~/go/src/github.com/gophercloud/gophercloud
     go test -v -tags "fixtures acceptance" -run "\$1" github.com/gophercloud/gophercloud/acceptance/openstack/\$2 | tee ~/gophercloud.log
     popd
+
+    unset OS_TENANT_NAME
+    unset OS_DOMAIN_NAME
+    unset OS_SHARE_NETWORK_ID
   fi
 }
 EOF

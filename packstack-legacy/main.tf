@@ -29,7 +29,7 @@ resource "openstack_compute_instance_v2" "packstack-legacy" {
 }
 
 data "template_file" "packstack-answers" {
-  template = "${file("packstack-answers.tpl")}"
+  template = "${file("files/packstack-answers.tpl")}"
 
   vars {
     ACCESS_IP_V4 = "${openstack_compute_instance_v2.packstack-legacy.access_ip_v4}"
@@ -49,19 +49,14 @@ resource "null_resource" "packstack-legacy" {
   }
 
   provisioner file {
-    source = "deploy.sh"
-    destination = "/home/centos/deploy.sh"
-  }
-
-  provisioner file {
-    source = "local.sh"
-    destination = "/home/centos/local.sh"
+    source = "files"
+    destination = "/home/centos/files"
   }
 
   provisioner "remote-exec" {
     inline = [
-      "sudo bash /home/centos/deploy.sh",
-      "sudo bash /home/centos/local.sh",
+      "sudo bash /home/centos/files/deploy.sh",
+      "sudo bash /home/centos/files/local.sh",
     ]
   }
 }

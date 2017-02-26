@@ -2,14 +2,29 @@
 set -x
 
 cd /root
-yum install -y -q lvm2
+yum install -y -q nfs-utils
+mkfs.ext4 -F /dev/sdb
 pvcreate /dev/sdb
-vgcreate cinder-volumes /dev/sdb
+sed -i -e '/sdb/d' /etc/fstab
+echo "/dev/sdb /mnt ext4 defaults 0 0" >> /etc/fstab
+mount -a
+mkdir /mnt/nfs
+chown nfsnobody:nfsnobody /mnt/nfs
+chmod 777 /mnt/nfs
+echo "/nfs 127.0.0.1(rw,sync,no_root_squash,no_subtree_check)" > /etc/exports
+exportfs -a
 
 yum install -y -q centos-release-openstack-mitaka
 yum update -y -q
-yum install -y -q openstack-packstack
+yum install -y -q openstack-packstack crudini
 packstack --answer-file /home/centos/packstack-answers.txt
+
+# Ensure Nova uses kvm
+crudini --set /etc/nova/nova.conf libvirt virt_type kvm
+systemctl restart openstack-nova-compute
+
+# Move findmnt to allow multiple mounts to 127.0.0.1:/mnt
+mv /bin/findmnt{,.orig}
 
 # Prep the testing environment by creating the required testing resources and environment variables
 source /root/keystonerc_admin
@@ -25,6 +40,14 @@ echo export OS_EXTGW_ID=$_EXTGW_ID >> /root/keystonerc_admin
 echo export OS_POOL_NAME="public" >> /root/keystonerc_admin
 echo export OS_FLAVOR_ID=99 >> /root/keystonerc_admin
 echo export OS_FLAVOR_ID_RESIZE=98 >> /root/keystonerc_admin
+
+echo export OS_IMAGE_NAME="cirros" >> /root/keystonerc_demo
+echo export OS_IMAGE_ID="$_IMAGE_ID" >> /root/keystonerc_demo
+echo export OS_NETWORK_ID=$_NETWORK_ID >> /root/keystonerc_demo
+echo export OS_EXTGW_ID=$_EXTGW_ID >> /root/keystonerc_demo
+echo export OS_POOL_NAME="public" >> /root/keystonerc_demo
+echo export OS_FLAVOR_ID=99 >> /root/keystonerc_demo
+echo export OS_FLAVOR_ID_RESIZE=98 >> /root/keystonerc_demo
 
 sudo yum install -y -q wget
 sudo yum install -y -q git
@@ -44,3 +67,5 @@ source .bashrc
 
 go get github.com/hashicorp/terraform
 go get github.com/gophercloud/gophercloud
+go get golang.org/x/crypto/...
+go get -u github.com/kardianos/govendor
