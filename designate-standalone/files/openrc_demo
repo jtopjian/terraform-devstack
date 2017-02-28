@@ -1,0 +1,14 @@
+export OS_AUTH_URL=http://localhost:5000/v2.0/
+export OS_REGION_NAME=RegionOne
+export OS_USERNAME=demo
+export OS_TENANT_NAME=demo
+export OS_PASSWORD=password
+export OS_NO_CACHE=1
+
+export OS_IMAGE_NAME="cirros"
+export OS_IMAGE_ID="abcd1234"
+export OS_NETWORK_ID="abdc1234"
+export OS_EXTGW_ID="abdc1234"
+export OS_POOL_NAME="public"
+export OS_FLAVOR_ID=99
+export OS_FLAVOR_ID_RESIZE=98
