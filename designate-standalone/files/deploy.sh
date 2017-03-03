@@ -66,8 +66,6 @@ mv /home/ubuntu/files/pdns-gmysql.conf /etc/powerdns/pdns.d/pdns.local.gmysql.co
 mv /home/ubuntu/files/pdns.conf /etc/powerdns/pdns.conf
 rm /etc/powerdns/pdns.d/pdns.simplebind.conf
 
-ln -s /etc/apache2/sites-available/wsgi-keystone.conf /etc/apache2/sites-enabled
-
 echo " ====> MySQL and file injection"
 
 #echo "ServerName controller" >> /etc/apache2/apache2.conf
@@ -75,15 +73,6 @@ echo " ====> MySQL and file injection"
 # Configure Keystone
 service keystone restart
 keystone-manage db_sync
-
-
-touch /var/log/designate/desigate-api.log
-touch /var/log/designate/desigate-central.log
-touch /var/log/designate/desigate-manage.log
-touch /var/log/designate/desigate-mdns.log
-touch /var/log/designate/desigate-pool-manager.log
-touch /var/log/designate/desigate-zone-manager.log
-chown -R designate:designate /var/log/designate/*
 
 designate-manage database sync
 

@@ -12,3 +12,4 @@ export OS_EXTGW_ID="abdc1234"
 export OS_POOL_NAME="public"
 export OS_FLAVOR_ID=99
 export OS_FLAVOR_ID_RESIZE=98
+export OS_SHARE_NETWORK_ID="abdc1234"
