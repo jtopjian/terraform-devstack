@@ -68,10 +68,10 @@ sudo yum install -y -q git
 sudo yum install -y -q vim
 sudo wget -O /usr/local/bin/gimme https://raw.githubusercontent.com/travis-ci/gimme/master/gimme
 sudo chmod +x /usr/local/bin/gimme
-/usr/local/bin/gimme 1.7 >> .bashrc
+/usr/local/bin/gimme 1.8 >> .bashrc
 
 mkdir ~/go
-eval "$(/usr/local/bin/gimme 1.7)"
+eval "$(/usr/local/bin/gimme 1.8)"
 echo 'export GOPATH=$HOME/go' >> .bashrc
 export GOPATH=$HOME/go
 
