@@ -22,14 +22,23 @@ mv /home/centos/files/nova_aggregate_openstack.rb /usr/share/openstack-puppet/mo
 mv /home/centos/files/nova_flavor_openstack.rb /usr/share/openstack-puppet/modules/nova/lib/puppet/provider/nova_flavor/openstack.rb
 packstack --answer-file /home/centos/packstack-answers.txt
 
-# Configure LBaaSv2
+# Configure LBaaSv2 and FWaaS
+crudini --set /etc/neutron/neutron.conf DEFAULT debug True
+crudini --set /etc/neutron/l3_agent.ini DEFAULT debug True
 crudini --set /etc/neutron/neutron.conf DEFAULT service_plugins router,firewall,neutron_lbaas.services.loadbalancer.plugin.LoadBalancerPluginv2
 crudini --set /etc/neutron/neutron.conf service_providers service_provider LOADBALANCERV2:Haproxy:neutron_lbaas.drivers.haproxy.plugin_driver.HaproxyOnHostPluginDriver:default
+crudini --set /etc/neutron/neutron.conf service_providers service_provider LOADBALANCERV2:Haproxy:neutron_lbaas.drivers.haproxy.plugin_driver.HaproxyOnHostPluginDriver:default,FIREWALL:Iptables:neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver:default
 crudini --set /etc/neutron/lbaas_agent.ini DEFAULT interface driver openvswitch
+crudini --set /etc/neutron/l3_agent.ini AGENT extensions fwaas
+crudini --set /etc/neutron/neutron.conf fwaas enabled True
+crudini --set /etc/neutron/neutron.conf fwaas driver iptables
+crudini --set /etc/neutron/neutron.conf fwaas agent_version v1
 
 neutron-db-manage --subproject neutron-lbaas upgrade head
+neutron-db-manage --subproject neutron-fwaas upgrade head
 systemctl disable neutron-lbaas-agent.service
 systemctl restart neutron-server.service
+systemctl restart neutron-l3-agent.service
 systemctl enable neutron-lbaasv2-agent.service
 systemctl start neutron-lbaasv2-agent.service
 
