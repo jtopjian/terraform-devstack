@@ -10,7 +10,7 @@ mount -a
 mkdir /mnt/nfs
 chown nfsnobody:nfsnobody /mnt/nfs
 chmod 777 /mnt/nfs
-echo "/nfs 127.0.0.1(rw,sync,no_root_squash,no_subtree_check)" > /etc/exports
+echo "/mnt/nfs 127.0.0.1(rw,sync,no_root_squash,no_subtree_check)" > /etc/exports
 exportfs -a
 
 yum install -y -q centos-release-openstack-newton
@@ -26,9 +26,9 @@ packstack --answer-file /home/centos/packstack-answers.txt
 crudini --set /etc/neutron/neutron.conf DEFAULT debug True
 crudini --set /etc/neutron/l3_agent.ini DEFAULT debug True
 crudini --set /etc/neutron/neutron.conf DEFAULT service_plugins router,firewall,neutron_lbaas.services.loadbalancer.plugin.LoadBalancerPluginv2
-crudini --set /etc/neutron/neutron.conf service_providers service_provider LOADBALANCERV2:Haproxy:neutron_lbaas.drivers.haproxy.plugin_driver.HaproxyOnHostPluginDriver:default
-crudini --set /etc/neutron/neutron.conf service_providers service_provider LOADBALANCERV2:Haproxy:neutron_lbaas.drivers.haproxy.plugin_driver.HaproxyOnHostPluginDriver:default,FIREWALL:Iptables:neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver:default
-crudini --set /etc/neutron/lbaas_agent.ini DEFAULT interface driver openvswitch
+crudini --set /etc/neutron/neutron_lbaas.conf service_providers service_provider LOADBALANCERV2:Haproxy:neutron_lbaas.drivers.haproxy.plugin_driver.HaproxyOnHostPluginDriver:default
+crudini --set /etc/neutron/neutron.conf service_providers service_provider FIREWALL:Iptables:neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver:default
+crudini --set /etc/neutron/lbaas_agent.ini DEFAULT interface_driver neutron.agent.linux.interface.OVSInterfaceDriver
 crudini --set /etc/neutron/l3_agent.ini AGENT extensions fwaas
 crudini --set /etc/neutron/neutron.conf fwaas enabled True
 crudini --set /etc/neutron/neutron.conf fwaas driver iptables

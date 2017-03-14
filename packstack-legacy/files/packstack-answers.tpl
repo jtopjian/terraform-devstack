@@ -571,7 +571,7 @@ CONFIG_CINDER_GLUSTER_MOUNTS=
 
 # A single or comma-separated list of NFS exports to mount. Example:
 # 'ip-address:/export-name'
-CONFIG_CINDER_NFS_MOUNTS=127.0.0.1:/nfs
+CONFIG_CINDER_NFS_MOUNTS=127.0.0.1:/mnt/nfs
 
 # Administrative user account name used to access the NetApp storage
 # system or proxy server.

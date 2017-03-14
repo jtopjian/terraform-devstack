@@ -11,7 +11,7 @@ mount -a
 mkdir /mnt/nfs
 chown nfsnobody:nfsnobody /mnt/nfs
 chmod 777 /mnt/nfs
-echo "/nfs 127.0.0.1(rw,sync,no_root_squash,no_subtree_check)" > /etc/exports
+echo "/mnt/nfs 127.0.0.1(rw,sync,no_root_squash,no_subtree_check)" > /etc/exports
 exportfs -a
 
 yum install -y -q centos-release-openstack-mitaka
