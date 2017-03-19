@@ -28,24 +28,11 @@ resource "openstack_compute_instance_v2" "packstack-standard" {
   }
 }
 
-data "template_file" "packstack-answers" {
-  template = "${file("files/packstack-answers.tpl")}"
-
-  vars {
-    ACCESS_IP_V4 = "${openstack_compute_instance_v2.packstack-standard.access_ip_v4}"
-  }
-}
-
 resource "null_resource" "packstack-standard" {
   connection {
     user = "centos"
     private_key = "${file("key/id_rsa")}"
     host = "${openstack_compute_instance_v2.packstack-standard.access_ip_v6}"
-  }
-
-  provisioner file {
-    content = "${data.template_file.packstack-answers.rendered}"
-    destination = "/home/centos/packstack-answers.txt"
   }
 
   provisioner file {

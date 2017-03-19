@@ -20,7 +20,7 @@ yum install -y -q openstack-packstack crudini
 # Patch Packstack for Newton
 mv /home/centos/files/nova_aggregate_openstack.rb /usr/share/openstack-puppet/modules/nova/lib/puppet/provider/nova_aggregate/openstack.rb
 mv /home/centos/files/nova_flavor_openstack.rb /usr/share/openstack-puppet/modules/nova/lib/puppet/provider/nova_flavor/openstack.rb
-packstack --answer-file /home/centos/packstack-answers.txt
+packstack --answer-file /home/centos/files/packstack-answers.txt
 
 # Configure LBaaSv2 and FWaaS
 crudini --set /etc/neutron/neutron.conf DEFAULT debug True

@@ -17,7 +17,7 @@ exportfs -a
 yum install -y -q centos-release-openstack-mitaka
 yum update -y -q
 yum install -y -q openstack-packstack crudini
-packstack --answer-file /home/centos/packstack-answers.txt
+packstack --answer-file /home/centos/files/packstack-answers.txt
 
 # Ensure Nova uses kvm
 crudini --set /etc/nova/nova.conf libvirt virt_type kvm
