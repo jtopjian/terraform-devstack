@@ -2,11 +2,8 @@
 set -x
 
 cd /root
+
 yum install -y -q nfs-utils
-mkfs.ext4 -F /dev/sdb
-sed -i -e '/sdb/d' /etc/fstab
-echo "/dev/sdb /mnt ext4 defaults 0 0" >> /etc/fstab
-mount -a
 mkdir /mnt/nfs
 chown nfsnobody:nfsnobody /mnt/nfs
 chmod 777 /mnt/nfs
@@ -18,9 +15,9 @@ yum update -y -q
 yum install -y -q openstack-packstack crudini
 
 # Patch Packstack for Newton
-mv /home/centos/files/nova_aggregate_openstack.rb /usr/share/openstack-puppet/modules/nova/lib/puppet/provider/nova_aggregate/openstack.rb
-mv /home/centos/files/nova_flavor_openstack.rb /usr/share/openstack-puppet/modules/nova/lib/puppet/provider/nova_flavor/openstack.rb
-packstack --answer-file /home/centos/files/packstack-answers.txt
+mv /root/files/nova_aggregate_openstack.rb /usr/share/openstack-puppet/modules/nova/lib/puppet/provider/nova_aggregate/openstack.rb
+mv /root/files/nova_flavor_openstack.rb /usr/share/openstack-puppet/modules/nova/lib/puppet/provider/nova_flavor/openstack.rb
+packstack --answer-file /root/files/packstack-answers.txt
 
 # Configure LBaaSv2 and FWaaS
 crudini --set /etc/neutron/neutron.conf DEFAULT debug True
@@ -72,11 +69,11 @@ echo export OS_POOL_NAME="public" >> /root/keystonerc_demo
 echo export OS_FLAVOR_ID=99 >> /root/keystonerc_demo
 echo export OS_FLAVOR_ID_RESIZE=98 >> /root/keystonerc_demo
 
-sudo yum install -y -q wget
-sudo yum install -y -q git
-sudo yum install -y -q vim
-sudo wget -O /usr/local/bin/gimme https://raw.githubusercontent.com/travis-ci/gimme/master/gimme
-sudo chmod +x /usr/local/bin/gimme
+yum install -y -q wget
+yum install -y -q git
+yum install -y -q vim
+wget -O /usr/local/bin/gimme https://raw.githubusercontent.com/travis-ci/gimme/master/gimme
+chmod +x /usr/local/bin/gimme
 /usr/local/bin/gimme 1.8 >> .bashrc
 
 mkdir ~/go
@@ -92,3 +89,6 @@ go get github.com/hashicorp/terraform
 go get github.com/gophercloud/gophercloud
 go get golang.org/x/crypto/...
 go get -u github.com/kardianos/govendor
+
+cp /root/files/rc.local /etc
+chmod +x /etc/rc.local

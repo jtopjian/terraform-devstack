@@ -1,0 +1,11 @@
+#!/bin/bash
+set -x
+
+mkdir /mnt/nfs
+chown nfsnobody:nfsnobody /mnt/nfs
+chmod 777 /mnt/nfs
+echo "/mnt/nfs 127.0.0.1(rw,sync,no_root_squash,no_subtree_check)" > /etc/exports
+exportfs -a
+
+sleep 30
+systemctl restart rabbitmq-server
