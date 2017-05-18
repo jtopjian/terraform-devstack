@@ -8,4 +8,32 @@ echo "/mnt/nfs 127.0.0.1(rw,sync,no_root_squash,no_subtree_check)" > /etc/export
 exportfs -a
 
 sleep 30
+
 systemctl restart rabbitmq-server
+while [[ true ]]; do
+  pgrep -f rabbit
+  if [[ $? == 0 ]]; then
+    break
+  fi
+  sleep 10
+  systemctl restart rabbitmq-server
+done
+
+sudo systemctl restart openstack-cinder-backup.service
+sudo systemctl restart openstack-cinder-scheduler.service
+sudo systemctl restart openstack-cinder-volume.service
+sudo systemctl restart openstack-nova-cert.service
+sudo systemctl restart openstack-nova-compute.service
+sudo systemctl restart openstack-nova-conductor.service
+sudo systemctl restart openstack-nova-consoleauth.service
+sudo systemctl restart openstack-nova-novncproxy.service
+sudo systemctl restart openstack-nova-scheduler.service
+sudo systemctl restart neutron-dhcp-agent.service
+sudo systemctl restart neutron-l3-agent.service
+sudo systemctl restart neutron-lbaasv2-agent.service
+sudo systemctl restart neutron-metadata-agent.service
+sudo systemctl restart neutron-openvswitch-agent.service
+sudo systemctl restart neutron-metering-agent.service
+sudo systemctl restart httpd
+
+nova-manage cell_v2 discover_hosts

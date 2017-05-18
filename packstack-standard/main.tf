@@ -5,7 +5,8 @@ resource "openstack_compute_keypair_v2" "packstack-standard" {
 
 resource "openstack_compute_instance_v2" "packstack-standard" {
   name = "packstack-standard"
-  image_name = "packstack-standard-newton"
+  image_name = "packstack-standard-ocata"
+  #image_name = "jtcentos"
   flavor_name = "jt.large2"
   key_pair = "${openstack_compute_keypair_v2.packstack-standard.name}"
   security_groups = ["default", "AllowAll"]

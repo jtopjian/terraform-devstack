@@ -26,13 +26,12 @@ CONFIG_CINDER_INSTALL=y
 
 # Specify 'y' to install OpenStack Shared File System (manila). ['y',
 # 'n']
-CONFIG_MANILA_INSTALL=n
+CONFIG_MANILA_INSTALL=y
 
 # Specify 'y' to install OpenStack Compute (nova). ['y', 'n']
 CONFIG_NOVA_INSTALL=y
 
-# Specify 'y' to install OpenStack Networking (neutron); otherwise,
-# Compute Networking (nova) will be used. ['y', 'n']
+# Specify 'y' to install OpenStack Networking (neutron) ['y']
 CONFIG_NEUTRON_INSTALL=y
 
 # Specify 'y' to install OpenStack Dashboard (horizon). ['y', 'n']
@@ -52,12 +51,19 @@ CONFIG_AODH_INSTALL=n
 # ['y', 'n']
 CONFIG_GNOCCHI_INSTALL=n
 
+# Specify 'y' to install OpenStack Events Service (panko). ['y', 'n']
+CONFIG_PANKO_INSTALL=n
+
 # Specify 'y' to install OpenStack Data Processing (sahara). In case
 # of sahara installation packstack also installs heat.['y', 'n']
 CONFIG_SAHARA_INSTALL=n
 
 # Specify 'y' to install OpenStack Orchestration (heat). ['y', 'n']
 CONFIG_HEAT_INSTALL=n
+
+# Specify 'y' to install OpenStack Container Infrastructure
+# Management Service (magnum). ['y', 'n']
+CONFIG_MAGNUM_INSTALL=n
 
 # Specify 'y' to install OpenStack Database (trove) ['y', 'n']
 CONFIG_TROVE_INSTALL=n
@@ -88,7 +94,7 @@ EXCLUDE_SERVERS=
 
 # Specify 'y' if you want to run OpenStack services in debug mode;
 # otherwise, specify 'n'. ['y', 'n']
-CONFIG_DEBUG_MODE=n
+CONFIG_DEBUG_MODE=y
 
 # Server on which to install OpenStack services specific to the
 # controller role (for example, API servers or dashboard).
@@ -113,8 +119,7 @@ CONFIG_UNSUPPORTED=n
 
 # Specify 'y' if you want to use subnet addresses (in CIDR format)
 # instead of interface names in following options:
-# CONFIG_NOVA_COMPUTE_PRIVIF, CONFIG_NOVA_NETWORK_PRIVIF,
-# CONFIG_NOVA_NETWORK_PUBIF, CONFIG_NEUTRON_OVS_BRIDGE_IFACES,
+# CONFIG_NEUTRON_OVS_BRIDGE_IFACES,
 # CONFIG_NEUTRON_LB_INTERFACE_MAPPINGS, CONFIG_NEUTRON_OVS_TUNNEL_IF.
 # This is useful for cases when interface names are not same on all
 # installation hosts.
@@ -252,25 +257,25 @@ CONFIG_SSL_CERT_DIR=~/packstackca/
 # Certificate.
 CONFIG_SSL_CACERT_SELFSIGN=y
 
-# Enter the selfsigned CAcert subject country.
-CONFIG_SELFSIGN_CACERT_SUBJECT_C=--
+# Enter the ssl certificates subject country.
+CONFIG_SSL_CERT_SUBJECT_C=--
 
-# Enter the selfsigned CAcert subject state.
-CONFIG_SELFSIGN_CACERT_SUBJECT_ST=State
+# Enter the ssl certificates subject state.
+CONFIG_SSL_CERT_SUBJECT_ST=State
 
-# Enter the selfsigned CAcert subject location.
-CONFIG_SELFSIGN_CACERT_SUBJECT_L=City
+# Enter the ssl certificates subject location.
+CONFIG_SSL_CERT_SUBJECT_L=City
 
-# Enter the selfsigned CAcert subject organization.
-CONFIG_SELFSIGN_CACERT_SUBJECT_O=openstack
+# Enter the ssl certificates subject organization.
+CONFIG_SSL_CERT_SUBJECT_O=openstack
 
-# Enter the selfsigned CAcert subject organizational unit.
-CONFIG_SELFSIGN_CACERT_SUBJECT_OU=packstack
+# Enter the ssl certificates subject organizational unit.
+CONFIG_SSL_CERT_SUBJECT_OU=packstack
 
-# Enter the selfsigned CAcert subject common name.
-CONFIG_SELFSIGN_CACERT_SUBJECT_CN=packstack-standard
+# Enter the ssl certificates subject common name.
+CONFIG_SSL_CERT_SUBJECT_CN=packstack-standard
 
-CONFIG_SELFSIGN_CACERT_SUBJECT_MAIL=admin@packstack-standard
+CONFIG_SSL_CERT_SUBJECT_MAIL=admin@packstack-standard
 
 # Service to be used as the AMQP broker. Allowed values are: rabbitmq
 # ['rabbitmq']
@@ -305,11 +310,11 @@ CONFIG_MARIADB_HOST=127.0.0.1
 CONFIG_MARIADB_USER=root
 
 # Password for the MariaDB administrative user.
-CONFIG_MARIADB_PW=fb8dc147c8784b18
+CONFIG_MARIADB_PW=5af1e95858724bbd
 
 # Password to use for the Identity service (keystone) to access the
 # database.
-CONFIG_KEYSTONE_DB_PW=7f934d05cc3842b1
+CONFIG_KEYSTONE_DB_PW=f5887d985cbd4228
 
 # Enter y if cron job for removing soft deleted DB rows should be
 # created.
@@ -320,7 +325,7 @@ CONFIG_KEYSTONE_DB_PURGE_ENABLE=True
 CONFIG_KEYSTONE_REGION=RegionOne
 
 # Token to use for the Identity service API.
-CONFIG_KEYSTONE_ADMIN_TOKEN=b1268cbe9bbe47138f3991246d033565
+CONFIG_KEYSTONE_ADMIN_TOKEN=decc159a116046feba9af60a682b9db3
 
 # Email address for the Identity service 'admin' user.  Defaults to
 CONFIG_KEYSTONE_ADMIN_EMAIL=root@localhost
@@ -330,27 +335,24 @@ CONFIG_KEYSTONE_ADMIN_EMAIL=root@localhost
 CONFIG_KEYSTONE_ADMIN_USERNAME=admin
 
 # Password to use for the Identity service 'admin' user.
-CONFIG_KEYSTONE_ADMIN_PW=08c33e2592fc4a46
+CONFIG_KEYSTONE_ADMIN_PW=c93e31944cea4ca6
 
 # Password to use for the Identity service 'demo' user.
-CONFIG_KEYSTONE_DEMO_PW=c028794fcb9f4362
+CONFIG_KEYSTONE_DEMO_PW=d24f67299f2d4c3c
 
 # Identity service API version string. ['v2.0', 'v3']
 CONFIG_KEYSTONE_API_VERSION=v3
 
-# Identity service token format (UUID or PKI). The recommended format
-# for new deployments is UUID. ['UUID', 'PKI']
-CONFIG_KEYSTONE_TOKEN_FORMAT=UUID
-
-# Name of service to use to run the Identity service (keystone or
-# httpd). ['keystone', 'httpd']
-CONFIG_KEYSTONE_SERVICE_NAME=httpd
+# Identity service token format (UUID, PKI or FERNET). The
+# recommended format for new deployments is FERNET. ['UUID', 'PKI',
+# 'FERNET']
+CONFIG_KEYSTONE_TOKEN_FORMAT=FERNET
 
 # Type of Identity service backend (sql or ldap). ['sql', 'ldap']
 CONFIG_KEYSTONE_IDENTITY_BACKEND=sql
 
 # URL for the Identity service LDAP backend.
-CONFIG_KEYSTONE_LDAP_URL=ldap://
+CONFIG_KEYSTONE_LDAP_URL=ldap://127.0.0.1
 
 # User DN for the Identity service LDAP backend.  Used to bind to the
 # LDAP server if the LDAP server does not allow anonymous
@@ -519,11 +521,11 @@ CONFIG_KEYSTONE_LDAP_TLS_REQ_CERT=demand
 
 # Password to use for the Image service (glance) to access the
 # database.
-CONFIG_GLANCE_DB_PW=361cee89aae8470e
+CONFIG_GLANCE_DB_PW=6af1a8f423074b12
 
 # Password to use for the Image service to authenticate with the
 # Identity service.
-CONFIG_GLANCE_KS_PW=a4844d15dd834792
+CONFIG_GLANCE_KS_PW=901888cb32d246aa
 
 # Storage backend for the Image service (controls how the Image
 # service stores disk images). Valid options are: file or swift
@@ -534,7 +536,7 @@ CONFIG_GLANCE_BACKEND=file
 
 # Password to use for the Block Storage service (cinder) to access
 # the database.
-CONFIG_CINDER_DB_PW=43f510600ae44732
+CONFIG_CINDER_DB_PW=e6d11d292a9d47ea
 
 # Enter y if cron job for removing soft deleted DB rows should be
 # created.
@@ -542,11 +544,11 @@ CONFIG_CINDER_DB_PURGE_ENABLE=True
 
 # Password to use for the Block Storage service to authenticate with
 # the Identity service.
-CONFIG_CINDER_KS_PW=05cafbadbf4f4509
+CONFIG_CINDER_KS_PW=403d27c612f840bd
 
 # Storage backend to use for the Block Storage service; valid options
-# are: lvm, gluster, nfs, vmdk, netapp. ['lvm', 'gluster', 'nfs',
-# 'vmdk', 'netapp']
+# are: lvm, gluster, nfs, vmdk, netapp, solidfire. ['lvm', 'gluster',
+# 'nfs', 'vmdk', 'netapp', 'solidfire']
 CONFIG_CINDER_BACKEND=nfs
 
 # Specify 'y' to create the Block Storage volumes group. That is,
@@ -695,6 +697,17 @@ CONFIG_CINDER_NETAPP_WEBSERVICE_PATH=/devmgr/v2
 # Defaults to ''.
 CONFIG_CINDER_NETAPP_STORAGE_POOLS=
 
+# Cluster admin account name used to access the SolidFire storage
+# system.
+CONFIG_CINDER_SOLIDFIRE_LOGIN=
+
+# Password for the SolidFire cluster admin user account specified in
+# the CONFIG_CINDER_SOLIDFIRE_LOGIN parameter.
+CONFIG_CINDER_SOLIDFIRE_PASSWORD=
+
+# Hostname (or IP address) for the SolidFire storage system's MVIP.
+CONFIG_CINDER_SOLIDFIRE_HOSTNAME=
+
 # Password to use for OpenStack Bare Metal Provisioning (ironic) to
 # access the database.
 CONFIG_IRONIC_DB_PW=PW_PLACEHOLDER
@@ -709,11 +722,15 @@ CONFIG_NOVA_DB_PURGE_ENABLE=True
 
 # Password to use for the Compute service (nova) to access the
 # database.
-CONFIG_NOVA_DB_PW=b2dcb3650862402e
+CONFIG_NOVA_DB_PW=352f7ec3aa834fd6
 
 # Password to use for the Compute service to authenticate with the
 # Identity service.
-CONFIG_NOVA_KS_PW=8d0f2de3d30e4be4
+CONFIG_NOVA_KS_PW=c975b909d0214751
+
+# Whether or not Packstack should manage a default initial set of
+# Nova flavors. Defaults to 'y'.
+CONFIG_NOVA_MANAGE_FLAVORS=y
 
 # Overcommitment ratio for virtual to physical CPUs. Specify 1.0 to
 # disable CPU overcommitment.
@@ -755,48 +772,16 @@ CONFIG_NOVA_PCI_PASSTHROUGH_WHITELIST=
 
 # The hypervisor driver to use with Nova. Can be either 'qemu' or
 # 'kvm'. Defaults to 'qemu' on virtual machines and 'kvm' on bare
-# metal hardware.
-CONFIG_NOVA_LIBVIRT_VIRT_TYPE=%{::default_hypervisor}
-
-# Private interface for flat DHCP on the Compute servers.
-CONFIG_NOVA_COMPUTE_PRIVIF=
-
-# Compute Network Manager. ['^nova\.network\.manager\.\w+Manager$']
-CONFIG_NOVA_NETWORK_MANAGER=nova.network.manager.FlatDHCPManager
-
-# Public interface on the Compute network server.
-CONFIG_NOVA_NETWORK_PUBIF=eth0
-
-# Private interface for flat DHCP on the Compute network server.
-CONFIG_NOVA_NETWORK_PRIVIF=
-
-# IP Range for flat DHCP. ['^[\:\.\da-fA-f]+(\/\d+){0,1}$']
-CONFIG_NOVA_NETWORK_FIXEDRANGE=192.168.32.0/22
-
-# IP Range for floating IP addresses. ['^[\:\.\da-
-# fA-f]+(\/\d+){0,1}$']
-CONFIG_NOVA_NETWORK_FLOATRANGE=10.3.4.0/22
-
-# Specify 'y' to automatically assign a floating IP to new instances.
-# ['y', 'n']
-CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP=n
-
-# First VLAN for private networks (Compute networking).
-CONFIG_NOVA_NETWORK_VLAN_START=100
-
-# Number of networks to support (Compute networking).
-CONFIG_NOVA_NETWORK_NUMBER=1
-
-# Number of addresses in each private subnet (Compute networking).
-CONFIG_NOVA_NETWORK_SIZE=255
+# metal hardware. For nested KVM set it explicitly to 'kvm'.
+CONFIG_NOVA_LIBVIRT_VIRT_TYPE=kvm
 
 # Password to use for OpenStack Networking (neutron) to authenticate
 # with the Identity service.
-CONFIG_NEUTRON_KS_PW=3f4c872c2d724bf0
+CONFIG_NEUTRON_KS_PW=2cf390ce7eaa4b3e
 
 # The password to use for OpenStack Networking to access the
 # database.
-CONFIG_NEUTRON_DB_PW=fa3a495e46654857
+CONFIG_NEUTRON_DB_PW=b4342e8152ac4f10
 
 # The name of the Open vSwitch bridge (or empty for linuxbridge) for
 # the OpenStack Networking L3 agent to use for external  traffic.
@@ -805,7 +790,7 @@ CONFIG_NEUTRON_DB_PW=fa3a495e46654857
 CONFIG_NEUTRON_L3_EXT_BRIDGE=br-ex
 
 # Password for the OpenStack Networking metadata agent.
-CONFIG_NEUTRON_METADATA_PW=49f9f90e765a4d04
+CONFIG_NEUTRON_METADATA_PW=a3c0a1f55e294b7c
 
 # Specify 'y' to install OpenStack Networking's Load-Balancing-
 # as-a-Service (LBaaS). ['y', 'n']
@@ -813,7 +798,7 @@ CONFIG_LBAAS_INSTALL=y
 
 # Specify 'y' to install OpenStack Networking's L3 Metering agent
 # ['y', 'n']
-CONFIG_NEUTRON_METERING_AGENT_INSTALL=n
+CONFIG_NEUTRON_METERING_AGENT_INSTALL=y
 
 # Specify 'y' to configure OpenStack Networking's Firewall-
 # as-a-Service (FWaaS). ['y', 'n']
@@ -826,7 +811,7 @@ CONFIG_NEUTRON_VPNAAS=n
 # Comma-separated list of network-type driver entry points to be
 # loaded from the neutron.ml2.type_drivers namespace. ['local',
 # 'flat', 'vlan', 'gre', 'vxlan']
-CONFIG_NEUTRON_ML2_TYPE_DRIVERS=vxlan
+CONFIG_NEUTRON_ML2_TYPE_DRIVERS=vxlan,flat
 
 # Comma-separated, ordered list of network types to allocate as
 # tenant networks. The 'local' value is only useful for single-box
@@ -877,9 +862,6 @@ CONFIG_NEUTRON_L2_AGENT=openvswitch
 # vendor_id:product_id according to the PCI ID Repository.
 CONFIG_NEUTRON_ML2_SUPPORTED_PCI_VENDOR_DEVS=['15b3:1004', '8086:10ca']
 
-# Specify 'y' if the sriov agent is required
-CONFIG_NEUTRON_ML2_SRIOV_AGENT_REQUIRED=n
-
 # Comma-separated list of interface mappings for the OpenStack
 # Networking ML2 SRIOV agent. Each tuple in the list must be in the
 # format <physical_network>:<net_interface>. Example:
@@ -896,7 +878,7 @@ CONFIG_NEUTRON_LB_INTERFACE_MAPPINGS=
 # Networking Open vSwitch plugin. Each tuple in the list must be in
 # the format <physical_network>:<ovs_bridge>. Example: physnet1:br-
 # eth1,physnet2:br-eth2,physnet3:br-eth3
-CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS=
+CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS=extnet:br-ex
 
 # Comma-separated list of colon-separated Open vSwitch
 # <bridge>:<interface> pairs. The interface will be added to the
@@ -918,6 +900,14 @@ CONFIG_NEUTRON_OVS_BRIDGE_IFACES=
 # ex,physnet1:br-vlan" --os-neutron-ovs-bridge-interfaces="br-ex:eth1
 # ,br-vlan:eth2"
 CONFIG_NEUTRON_OVS_BRIDGES_COMPUTE=
+
+# Name of physical network used for external network when enabling
+# CONFIG_PROVISION_DEMO. Name must be one of the included in
+# CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS. Example: --os-neutron-ovs-
+# bridge-mappings="extnet:br-ex,physnet1:br-vlan" --os-neutron-ovs-
+# bridge-interfaces="br-ex:eth1,br-vlan:eth2" --os-neutron-ovs-
+# external-physnet="extnet"
+CONFIG_NEUTRON_OVS_EXTERNAL_PHYSNET=extnet
 
 # Interface for the Open vSwitch tunnel. Packstack overrides the IP
 # address used for tunnels on this hypervisor to the IP found on the
@@ -1015,7 +1005,7 @@ CONFIG_MANILA_GENERIC_VOLUME_NAME_TEMPLATE=manila-share-%s
 CONFIG_MANILA_GENERIC_SHARE_MOUNT_PATH=/shares
 
 # Location of disk image for Manila service instance. Defaults to '
-CONFIG_MANILA_SERVICE_IMAGE_LOCATION=https://www.dropbox.com/s/vi5oeh10q1qkckh/ubuntu_1204_nfs_cifs.qcow2
+CONFIG_MANILA_SERVICE_IMAGE_LOCATION=http://tarballs.openstack.org/manila-image-elements/images/manila-ubuntu-core.qcow2
 
 # User in Manila service instance.
 CONFIG_MANILA_SERVICE_INSTANCE_USER=ubuntu
@@ -1092,7 +1082,7 @@ CONFIG_MANILA_GLUSTERFS_GANESHA_SERVER_IP=
 CONFIG_HORIZON_SSL=n
 
 # Secret key to use for Horizon Secret Encryption Key.
-CONFIG_HORIZON_SECRET_KEY=082c09f4e8c843fdbbcd4695360d12eb
+CONFIG_HORIZON_SECRET_KEY=9de8b7329e394e25b6f8a3c7979d7ec5
 
 # PEM-encoded certificate to be used for SSL connections on the https
 # server. To generate a certificate, leave blank.
@@ -1106,7 +1096,7 @@ CONFIG_HORIZON_SSL_CACERT=
 
 # Password to use for the Object Storage service to authenticate with
 # the Identity service.
-CONFIG_SWIFT_KS_PW=71c94b5a2c3e46dc
+CONFIG_SWIFT_KS_PW=837d1ab0fb2947cb
 
 # Comma-separated list of devices to use as storage device for Object
 # Storage. Each entry must take the format /path/to/dev (for example,
@@ -1130,7 +1120,7 @@ CONFIG_SWIFT_STORAGE_FSTYPE=ext4
 # Custom seed number to use for swift_hash_path_suffix in
 # /etc/swift/swift.conf. If you do not provide a value, a seed number
 # is automatically generated.
-CONFIG_SWIFT_HASH=f2b3e8731fa04be9
+CONFIG_SWIFT_HASH=9b9cf1ea36a54faf
 
 # Size of the Object Storage loopback file storage device.
 CONFIG_SWIFT_STORAGE_SIZE=2G
@@ -1141,7 +1131,7 @@ CONFIG_HEAT_DB_PW=PW_PLACEHOLDER
 
 # Encryption key to use for authentication in the Orchestration
 # database (16, 24, or 32 chars).
-CONFIG_HEAT_AUTH_ENC_KEY=77a128115c6a41ee
+CONFIG_HEAT_AUTH_ENC_KEY=64bc4a504c4b4a9e
 
 # Password to use for the Orchestration service to authenticate with
 # the Identity service.
@@ -1152,7 +1142,7 @@ CONFIG_HEAT_CLOUDWATCH_INSTALL=n
 
 # Specify 'y' to install the Orchestration CloudFormation API. ['y',
 # 'n']
-CONFIG_HEAT_CFN_INSTALL=n
+CONFIG_HEAT_CFN_INSTALL=y
 
 # Name of the Identity domain for Orchestration.
 CONFIG_HEAT_DOMAIN=heat
@@ -1173,7 +1163,7 @@ CONFIG_PROVISION_DEMO=y
 CONFIG_PROVISION_TEMPEST=n
 
 # CIDR network address for the floating IP subnet.
-CONFIG_PROVISION_DEMO_FLOATRANGE=172.24.4.224/28
+CONFIG_PROVISION_DEMO_FLOATRANGE=172.24.4.0/24
 
 # The name to be assigned to the demo image in Glance (default
 # "cirros").
@@ -1216,13 +1206,7 @@ CONFIG_PROVISION_TEMPEST_USER=
 CONFIG_PROVISION_TEMPEST_USER_PW=PW_PLACEHOLDER
 
 # CIDR network address for the floating IP subnet.
-CONFIG_PROVISION_TEMPEST_FLOATRANGE=172.24.4.224/28
-
-# URI of the Integration Test Suite git repository.
-CONFIG_PROVISION_TEMPEST_REPO_URI=https://github.com/openstack/tempest.git
-
-# Revision (branch) of the Integration Test Suite git repository.
-CONFIG_PROVISION_TEMPEST_REPO_REVISION=master
+CONFIG_PROVISION_TEMPEST_FLOATRANGE=172.24.4.0/24
 
 # Specify 'y' to run Tempest smoke test as last step of installation.
 CONFIG_RUN_TEMPEST=n
@@ -1237,18 +1221,18 @@ CONFIG_RUN_TEMPEST_TESTS=smoke
 CONFIG_PROVISION_OVS_BRIDGE=y
 
 # Password to use for Gnocchi to access the database.
-CONFIG_GNOCCHI_DB_PW=b2acefd287314f18
+CONFIG_GNOCCHI_DB_PW=4f6030ddf3a74c0d
 
 # Password to use for Gnocchi to authenticate with the Identity
 # service.
-CONFIG_GNOCCHI_KS_PW=31e99607822241c9
+CONFIG_GNOCCHI_KS_PW=34918110abf841a7
 
 # Secret key for signing Telemetry service (ceilometer) messages.
-CONFIG_CEILOMETER_SECRET=dbd01d7cd69745ab
+CONFIG_CEILOMETER_SECRET=820da38c7bd941d5
 
 # Password to use for Telemetry to authenticate with the Identity
 # service.
-CONFIG_CEILOMETER_KS_PW=47326664dc474f74
+CONFIG_CEILOMETER_KS_PW=60f422ddd5234cdb
 
 # Ceilometer service name. ['httpd', 'ceilometer']
 CONFIG_CEILOMETER_SERVICE_NAME=httpd
@@ -1261,40 +1245,31 @@ CONFIG_CEILOMETER_COORDINATION_BACKEND=redis
 # ['database', 'gnocchi']
 CONFIG_CEILOMETER_METERING_BACKEND=database
 
+CONFIG_CEILOMETER_EVENTS_BACKEND=database
+
 # IP address of the server on which to install MongoDB.
 CONFIG_MONGODB_HOST=127.0.0.1
 
-# IP address of the server on which to install the Redis master
-# server.
-CONFIG_REDIS_MASTER_HOST=127.0.0.1
+# IP address of the server on which to install the Redis server.
+CONFIG_REDIS_HOST=127.0.0.1
 
-# Port on which the Redis server(s) listens.
+# Port on which the Redis server listens.
 CONFIG_REDIS_PORT=6379
-
-# Specify 'y' to have Redis try to use HA. ['y', 'n']
-CONFIG_REDIS_HA=n
-
-# Hosts on which to install Redis slaves.
-CONFIG_REDIS_SLAVE_HOSTS=
-
-# Hosts on which to install Redis sentinel servers.
-CONFIG_REDIS_SENTINEL_HOSTS=
-
-# Host to configure as the Redis coordination sentinel.
-CONFIG_REDIS_SENTINEL_CONTACT_HOST=
-
-# Port on which Redis sentinel servers listen.
-CONFIG_REDIS_SENTINEL_PORT=26379
-
-# Quorum value for Redis sentinel servers.
-CONFIG_REDIS_SENTINEL_QUORUM=2
-
-# Name of the master server watched by the Redis sentinel. ['[a-z]+']
-CONFIG_REDIS_MASTER_NAME=mymaster
 
 # Password to use for Telemetry Alarming to authenticate with the
 # Identity service.
-CONFIG_AODH_KS_PW=928056a97a164367
+CONFIG_AODH_KS_PW=ec597d8cf77c4cd6
+
+# Password to use for Telemetry Alarming (AODH) to access the
+# database.
+CONFIG_AODH_DB_PW=70c76ae818914335
+
+# Password to use for Panko to access the database.
+CONFIG_PANKO_DB_PW=PW_PLACEHOLDER
+
+# Password to use for Panko to authenticate with the Identity
+# service.
+CONFIG_PANKO_KS_PW=PW_PLACEHOLDER
 
 # Password to use for OpenStack Database-as-a-Service (trove) to
 # access the database.
@@ -1325,4 +1300,11 @@ CONFIG_SAHARA_DB_PW=PW_PLACEHOLDER
 CONFIG_SAHARA_KS_PW=PW_PLACEHOLDER
 
 # Password of the nagiosadmin user on the Nagios server.
-CONFIG_NAGIOS_PW=8f56d3c25c4f491b
+CONFIG_NAGIOS_PW=PW_PLACEHOLDER
+
+# Password to use for the Magnum to access the database.
+CONFIG_MAGNUM_DB_PW=PW_PLACEHOLDER
+
+# Password to use for the Magnum to authenticate with the Identity
+# service.
+CONFIG_MAGNUM_KS_PW=PW_PLACEHOLDER

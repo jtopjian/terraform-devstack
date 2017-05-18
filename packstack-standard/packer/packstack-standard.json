@@ -4,25 +4,25 @@
     "source_image": "5f2ba379-4c0e-4600-8c7b-9d8aadfaddae",
     "flavor": "jt.large2",
     "security_groups": ["AllowAll"],
-    "image_name": "packstack-standard-newton",
-    "ssh_username": "root",
+    "image_name": "packstack-standard-ocata",
+    "ssh_username": "centos",
     "ssh_keypair_name": "infra",
     "ssh_private_key_file": "/root/infrastructure/keys/infra",
     "ssh_ip_version": 6,
-    "user_data": "#cloud-config\ndisable_root: false"
+    "networks": ["b0b12e8f-a695-480e-9dc2-3dc8ac2d55fd"]
   }],
 
   "provisioners": [
     {
       "type": "file",
       "source": "files",
-      "destination": "/root/files"
+      "destination": "/home/centos/files"
     },
     {
       "type": "shell",
       "inline": [
-        "sudo bash /root/files/deploy.sh",
-        "sudo bash /root/files/local.sh"
+        "bash /home/centos/files/deploy.sh",
+        "bash /home/centos/files/local.sh"
       ]
     }
   ]

@@ -1,4 +1,4 @@
-cd /root
+cd
 git clone https://github.com/jtopjian/dotfiles .dotfiles
 pushd .dotfiles
 bash create.sh
