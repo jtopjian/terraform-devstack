@@ -2,10 +2,6 @@ variable "key_name" {}
 variable "private_key" {}
 variable "network_id" {}
 
-variable "pool" {
-  default = "public"
-}
-
 variable "flavor" {
   default = "jt.large2"
 }
@@ -89,11 +85,24 @@ resource "openstack_compute_instance_v2" "openstack_acc_tests" {
   }
 }
 
-resource "null_resource" "rc_files" {
+resource "null_resource" "openstack_acc_tests" {
   connection {
     host = "${openstack_compute_instance_v2.openstack_acc_tests.access_ip_v6}"
     user = "centos"
     private_key = "${file(var.private_key)}"
+  }
+
+  provisioner "local-exec" {
+    command = <<EOF
+      while true ; do
+        wget http://${openstack_compute_instance_v2.openstack_acc_tests.access_ip_v6}/keystonerc_demo 2> /dev/null
+        if [ $? = 0 ]; then
+          break
+        fi
+        sleep 20
+      done
+      rm keystonerc_demo
+    EOF
   }
 
   provisioner "remote-exec" {

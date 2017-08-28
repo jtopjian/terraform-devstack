@@ -1,3 +1,5 @@
+variable "private_key" {}
+
 provider "aws" {
   region = "us-west-2"
 }
@@ -26,9 +28,16 @@ resource "aws_spot_instance_request" "openstack_acc_tests" {
   tags {
     Name = "OpenStack Acceptance Test Infra"
   }
+
 }
 
-resource "null_resource" "rc_files" {
+resource "null_resource" "openstack_acc_tests" {
+  connection {
+    host = "${aws_spot_instance_request.openstack_acc_tests.public_ip}"
+    user = "centos"
+    private_key = "${file(var.private_key)}"
+  }
+
   provisioner "local-exec" {
     command = <<EOF
       while true ; do
@@ -38,8 +47,11 @@ resource "null_resource" "rc_files" {
         fi
         sleep 20
       done
-
-      wget http://${aws_spot_instance_request.openstack_acc_tests.public_ip}/keystonerc_admin
+      rm keystonerc_demo
     EOF
+  }
+
+  provisioner "remote-exec" {
+    scripts = ["../../local.sh"]
   }
 }
