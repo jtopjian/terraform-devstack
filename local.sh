@@ -16,14 +16,9 @@ git remote add jtopjian https://github.com/jtopjian/terraform-provider-openstack
 git fetch jtopjian
 popd
 
-go get -u github.com/hashicorp/terraform
-pushd go/src/github.com/hashicorp/terraform
-git remote add jtopjian https://github.com/jtopjian/terraform
-git fetch jtopjian
-popd
-
 go get -u github.com/gophercloud/gophercloud
 pushd go/src/github.com/gophercloud/gophercloud
+go get -u ./...
 git remote add jtopjian https://github.com/jtopjian/gophercloud
 git fetch jtopjian
 popd

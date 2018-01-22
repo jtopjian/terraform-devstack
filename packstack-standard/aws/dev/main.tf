@@ -2,25 +2,19 @@ provider "aws" {
   region = "us-west-2"
 }
 
-data "aws_ami" "packstack_standard" {
-  most_recent = true
-  owners      = ["self"]
-  name_regex  = "^packstack-standard-ocata"
-}
-
 resource "random_id" "key_name" {
-  prefix = "openstack_acc_tests_"
-  bytes  = 8
+  prefix      = "openstack_acc_tests_"
+  byte_length = 8
 }
 
 resource "random_id" "security_group_name" {
-  prefix = "openstack_acc_tests_"
-  bytes  = 8
+  prefix      = "openstack_acc_tests_"
+  byte_length = 8
 }
 
 resource "aws_key_pair" "openstack_acc_tests" {
   key_name   = "${random_id.key_name.hex}"
-  public_key = "${file("../key/id_rsa.pub")}"
+  public_key = "${file("../../key/id_rsa.pub")}"
 }
 
 resource "aws_security_group" "openstack_acc_tests" {
@@ -50,7 +44,8 @@ resource "aws_security_group" "openstack_acc_tests" {
 }
 
 resource "aws_spot_instance_request" "openstack_acc_tests" {
-  ami                  = "${data.aws_ami.packstack_standard.id}"
+  ami = "ami-0c2aba6c"
+
   spot_price           = "0.0580"
   instance_type        = "m3.xlarge"
   wait_for_fulfillment = true
@@ -65,31 +60,27 @@ resource "aws_spot_instance_request" "openstack_acc_tests" {
   }
 
   tags {
-    Name = "OpenStack Acceptance Test Infra"
+    Name = "OpenStack Test Infra"
   }
 }
 
-resource "null_resource" "openstack_acc_tests" {
+resource "null_resource" "provisioner" {
   connection {
-    host        = "${aws_spot_instance_request.openstack_acc_tests.public_ip}"
     user        = "centos"
-    private_key = "${file("../key/id_rsa")}"
+    host        = "${aws_spot_instance_request.openstack_acc_tests.public_ip}"
+    private_key = "${file("../../key/id_rsa")}"
   }
 
-  provisioner "local-exec" {
-    command = <<EOF
-      while true ; do
-        wget http://${aws_spot_instance_request.openstack_acc_tests.public_ip}/keystonerc_demo 2> /dev/null
-        if [ $? = 0 ]; then
-          break
-        fi
-        sleep 20
-      done
-      rm keystonerc_demo
-    EOF
+  provisioner "file" {
+    source      = "../../files"
+    destination = "/home/centos/files"
   }
 
   provisioner "remote-exec" {
-    scripts = ["../../local.sh"]
+    scripts = ["../../../local.sh"]
   }
+}
+
+output "ip" {
+  value = "${aws_spot_instance_request.openstack_acc_tests.public_ip}"
 }

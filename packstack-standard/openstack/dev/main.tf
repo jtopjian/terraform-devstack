@@ -1,16 +1,13 @@
 variable "network_id" {}
 
+variable "image_id" {}
+
 variable "pool" {
   default = "public"
 }
 
 variable "flavor" {
   default = "m1.xlarge"
-}
-
-data "openstack_images_image_v2" "packstack_standard" {
-  name        = "packstack-standard-pike"
-  most_recent = true
 }
 
 resource "random_id" "security_group_name" {
@@ -30,11 +27,7 @@ resource "random_id" "key_name" {
 
 resource "openstack_compute_keypair_v2" "openstack_acc_tests" {
   name       = "${random_id.key_name.hex}"
-  public_key = "${file("../key/id_rsa.pub")}"
-}
-
-resource "openstack_networking_floatingip_v2" "openstack_acc_tests" {
-  pool = "${var.pool}"
+  public_key = "${file("../../key/id_rsa.pub")}"
 }
 
 resource "openstack_networking_secgroup_v2" "openstack_acc_tests" {
@@ -99,10 +92,10 @@ resource "openstack_networking_secgroup_rule_v2" "openstack_acc_tests_rule_6" {
 }
 
 resource "openstack_compute_instance_v2" "openstack_acc_tests" {
-  name        = "openstack_acc_tests"
-  image_id    = "${data.openstack_images_image_v2.packstack_standard.id}"
+  name        = "${random_id.instance_name.hex}"
+  image_id    = "${var.image_id}"
   flavor_name = "${var.flavor}"
-  key_pair    = "${openstack_compute_keypair_v2.openstack_acc_tests.name}"
+  key_pair    = "${var.key_name}"
 
   security_groups = ["${openstack_networking_secgroup_v2.openstack_acc_tests.name}"]
 
@@ -111,23 +104,19 @@ resource "openstack_compute_instance_v2" "openstack_acc_tests" {
   }
 }
 
-resource "openstack_compute_floatingip_associate_v2" "openstack_acc_tests" {
-  instance_id = "${openstack_compute_instance_v2.openstack_acc_tests.id}"
-  floating_ip = "${openstack_networking_floatingip_v2.openstack_acc_tests.address}"
-}
+resource "null_resource" "provisioner" {
+  connection {
+    user        = "centos"
+    host        = "${openstack_compute_instance_v2.openstack_acc_tests.access_ip_v6}"
+    private_key = "${file("../../key/id_rsa")}"
+  }
 
-resource "null_resource" "rc_files" {
-  provisioner "local-exec" {
-    command = <<EOF
-      while true ; do
-        wget http://${openstack_compute_floatingip_associate_v2.openstack_acc_tests.floating_ip}/keystonerc_demo 2> /dev/null
-        if [ $? = 0 ]; then
-          break
-        fi
-        sleep 20
-      done
+  provisioner "file" {
+    source      = "../../files"
+    destination = "/home/centos/files"
+  }
 
-      wget http://${openstack_compute_floatingip_associate_v2.openstack_acc_tests.floating_ip}/keystonerc_admin
-    EOF
+  provisioner "remote-exec" {
+    scripts = ["../../../local.sh"]
   }
 }

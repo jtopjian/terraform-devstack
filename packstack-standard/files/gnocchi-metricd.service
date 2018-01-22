@@ -1,0 +1,14 @@
+[Unit]
+Description=Gnocchi metricd
+After=syslog.target network.target
+
+[Service]
+Type=notify
+NotifyAccess=all
+TimeoutStartSec=0
+Restart=always
+User=gnocchi
+ExecStart=/usr/bin/gnocchi-metricd
+
+[Install]
+WantedBy=multi-user.target

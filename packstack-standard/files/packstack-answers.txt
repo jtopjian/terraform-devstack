@@ -59,14 +59,14 @@ CONFIG_PANKO_INSTALL=n
 CONFIG_SAHARA_INSTALL=n
 
 # Specify 'y' to install OpenStack Orchestration (heat). ['y', 'n']
-CONFIG_HEAT_INSTALL=n
+CONFIG_HEAT_INSTALL=y
 
 # Specify 'y' to install OpenStack Container Infrastructure
 # Management Service (magnum). ['y', 'n']
 CONFIG_MAGNUM_INSTALL=n
 
 # Specify 'y' to install OpenStack Database (trove) ['y', 'n']
-CONFIG_TROVE_INSTALL=n
+CONFIG_TROVE_INSTALL=y
 
 # Specify 'y' to install OpenStack Bare Metal Provisioning (ironic).
 # ['y', 'n']
@@ -1005,7 +1005,7 @@ CONFIG_MANILA_GENERIC_VOLUME_NAME_TEMPLATE=manila-share-%s
 CONFIG_MANILA_GENERIC_SHARE_MOUNT_PATH=/shares
 
 # Location of disk image for Manila service instance. Defaults to '
-CONFIG_MANILA_SERVICE_IMAGE_LOCATION=http://tarballs.openstack.org/manila-image-elements/images/manila-ubuntu-core.qcow2
+CONFIG_MANILA_SERVICE_IMAGE_LOCATION=https://www.dropbox.com/s/vi5oeh10q1qkckh/ubuntu_1204_nfs_cifs.qcow2
 
 # User in Manila service instance.
 CONFIG_MANILA_SERVICE_INSTANCE_USER=ubuntu
@@ -1171,7 +1171,7 @@ CONFIG_PROVISION_IMAGE_NAME=cirros
 
 # A URL or local file location for an image to download and provision
 # in Glance (defaults to a URL for a recent "cirros" image).
-CONFIG_PROVISION_IMAGE_URL=http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img
+CONFIG_PROVISION_IMAGE_URL=https://trunk.rdoproject.org/cirros-0.3.4-x86_64-disk.img
 
 # Format for the demo image (default "qcow2").
 CONFIG_PROVISION_IMAGE_FORMAT=qcow2

@@ -14,20 +14,18 @@ exportfs -a
 
 # Update the Keystone catalog for the new public IP
 public_ip=$(curl http://169.254.169.254/latest/meta-data/public-ipv4/)
-if [[ -z $public_ip ]]; then
-  public_ip="127.0.0.1"
+if [[ -n $public_ip ]]; then
+  while true ; do
+    mysql -e "update endpoint set url = replace(url, '127.0.0.1', '$public_ip')" keystone
+    if [[ $? == 0 ]]; then
+      break
+    fi
+    sleep 10
+  done
+
+  sed -i -e "s/127.0.0.1/$public_ip/g" /home/centos/keystonerc_demo
+  sed -i -e "s/127.0.0.1/$public_ip/g" /home/centos/keystonerc_admin
 fi
-
-while true ; do
-  mysql -e "update endpoint set url = replace(url, '127.0.0.1', '$public_ip')" keystone
-  if [[ $? == 0 ]]; then
-    break
-  fi
-  sleep 10
-done
-
-sed -i -e "s/127.0.0.1/$public_ip/g" /home/centos/keystonerc_demo
-sed -i -e "s/127.0.0.1/$public_ip/g" /home/centos/keystonerc_admin
 
 # Kick rabbit
 systemctl restart rabbitmq-server
@@ -61,6 +59,9 @@ systemctl restart neutron-metering-agent.service
 systemctl restart httpd
 systemctl restart designate-central designate-api
 systemctl restart designate-worker designate-producer designate-mdns
+systemctl restart openstack-trove-api
+systemctl restart openstack-trove-conductor
+systemctl restart openstack-trove-taskmanager
 
 # Discover the local compute service
 nova-manage cell_v2 discover_hosts
@@ -70,11 +71,25 @@ sudo -u designate designate-manage pool update
 
 # iptables for Designate
 iptables -I INPUT -p tcp --dport 9001 -j ACCEPT
+ip6tables -I INPUT -p tcp --dport 9001 -j ACCEPT
 
 # Restart PowerDNS
 systemctl restart pdns
 
+# Fix networking
+ifconfig br-ex up
+ip addr add 172.24.4.1/24 dev br-ex
+neutron router-gateway-clear router1
+neutron router-gateway-set router1 public
+
+# iptables for trove/rabbitmq
+iptables -I INPUT -p tcp --dport 5672 -j ACCEPT
+
+# iptables for gnocchi
+iptables -I INPUT -p tcp --dport 8041 -j ACCEPT
+
 # Place the rc files in a web-accessible area
 iptables -I INPUT -p tcp --dport 80 -j ACCEPT
+ip6tables -I INPUT -p tcp --dport 80 -j ACCEPT
 cp /home/centos/keystonerc* /var/www/html
 chmod 666 /var/www/html/keystonerc*

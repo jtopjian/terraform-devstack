@@ -1,0 +1,28 @@
+#cloud-config
+# For Ubuntu-16.04 cloudimage
+password: mysecret
+chpasswd: { expire: False }
+ssh_pwauth: True
+apt_sources:
+- source: "cloud-archive:ocata"
+packages:
+- trove-guestagent
+- mariadb-server
+write_files:
+- path: /etc/sudoers.d/trove
+  content: |
+    Defaults:trove !requiretty
+    trove ALL=(ALL) NOPASSWD:ALL
+- path: /root/.mysql_secret
+  content: |
+    # The random password set for the root user at Fri May 23 00:00:00 2014 (local time): password
+bootcmd:
+- apt-get update -qq
+- apt-get install -y ubuntu-cloud-keyring
+runcmd:
+- systemctl stop trove-guestagent
+- [chown, -R, "trove:", /etc/trove]
+- rm /etc/trove/*.conf
+- sed -i -e '/datadir/d' /etc/mysql/mariadb.conf.d/50-server.cnf
+- mysql -uroot -hlocalhost -e "UPDATE mysql.user SET plugin='mysql_native_password' WHERE User='root'; FLUSH PRIVILEGES;"
+- systemctl start trove-guestagent

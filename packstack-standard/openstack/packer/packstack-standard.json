@@ -3,7 +3,7 @@
     "type": "openstack",
     "flavor": "{{user `flavor`}}",
     "security_groups": ["{{user `secgroup`}}"],
-    "image_name": "packstack-standard-ocata",
+    "image_name": "packstack-standard-pike",
     "ssh_username": "centos",
     "source_image": "{{user `image_id`}}",
     "floating_ip_pool": "{{user `pool`}}",
