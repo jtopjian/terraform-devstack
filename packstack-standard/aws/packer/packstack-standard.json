@@ -6,8 +6,8 @@
     "spot_price_auto_product": "Linux/UNIX",
     "instance_type": "m3.xlarge",
     "ssh_username": "centos",
-    "ami_name": "packstack-standard-ocata {{timestamp}}",
-    "tags": {"release": "ocata"},
+    "ami_name": "packstack-standard-pike {{timestamp}}",
+    "tags": {"release": "pike"},
     "source_ami_filter": {
       "filters": {
         "virtualization-type": "hvm",

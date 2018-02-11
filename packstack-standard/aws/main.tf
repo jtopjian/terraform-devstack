@@ -5,7 +5,7 @@ provider "aws" {
 data "aws_ami" "packstack_standard" {
   most_recent = true
   owners      = ["self"]
-  name_regex  = "^packstack-standard-ocata"
+  name_regex  = "^packstack-standard-pike"
 }
 
 resource "random_id" "key_name" {
